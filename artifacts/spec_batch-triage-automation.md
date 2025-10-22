@@ -1,5 +1,16 @@
 # Batch Triage Automation - Technical Specification
 
+> **⚠️ IMPORTANT**: This spec has a critical companion document that MUST be read before implementation:
+> **[Isolation Architecture Addendum](./spec_batch-triage-automation_isolation-addendum.md)**
+>
+> The addendum clarifies:
+> - Complete isolation from user's development repos (`~/git/`, `~/.frond/`)
+> - GitHub user authentication strategy (`exec_as_user` integration)
+> - Workspace architecture and safety guarantees
+> - gh CLI usage patterns for all GitHub operations
+>
+> **Do not implement without reading the addendum first.**
+
 ## Overview
 
 Automated system for triaging GitHub issues synced to Linear, designed to accelerate issue burndown by performing textual analysis and recommending categorization with selective reproduction when needed.
