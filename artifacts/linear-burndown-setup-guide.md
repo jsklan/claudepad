@@ -74,11 +74,7 @@ Click **Linear Sync → Refresh All Customers** to update all four sheets simult
 
 ### Chart Explanation
 
-The burndown chart shows three lines:
-
-1. **Total Created (Blue)**: Cumulative count of all GitHub issues created over time
-2. **Total Completed (Green)**: Cumulative count of completed issues
-3. **Remaining (Red)**: Active issues still open (Created - Completed)
+The burndown chart shows a single red line tracking **Incomplete Issues** over time - the count of active GitHub issues that are still open. As issues are completed, the line trends downward (ideal burndown behavior).
 
 ### Summary Stats
 

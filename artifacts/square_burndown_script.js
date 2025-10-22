@@ -185,7 +185,8 @@ function prepareBurndownData(issues) {
     });
   }
 
-  return data;
+  // Reverse array to show most recent dates first
+  return data.reverse();
 }
 
 
@@ -331,24 +332,20 @@ function createBurndownChart(sheet, projectName, dataRows) {
 
   if (dataRows === 0) return;
 
-  // Create new chart
+  // Create new chart - showing only Remaining issues
   const chart = sheet.newChart()
     .setChartType(Charts.ChartType.LINE)
     .addRange(sheet.getRange(3, 1, dataRows + 1, 1)) // Date column
-    .addRange(sheet.getRange(3, 2, dataRows + 1, 1)) // Created
-    .addRange(sheet.getRange(3, 3, dataRows + 1, 1)) // Completed
-    .addRange(sheet.getRange(3, 4, dataRows + 1, 1)) // Remaining
+    .addRange(sheet.getRange(3, 4, dataRows + 1, 1)) // Remaining only
     .setPosition(9, 1, 0, 0)
-    .setOption('title', `${projectName} - GitHub Issue Burndown`)
+    .setOption('title', `${projectName} - Incomplete Issues`)
     .setOption('width', 800)
     .setOption('height', 400)
     .setOption('hAxis', { title: 'Date', format: 'MMM d' })
-    .setOption('vAxis', { title: 'Issue Count', minValue: 0 })
-    .setOption('legend', { position: 'bottom' })
+    .setOption('vAxis', { title: 'Incomplete Issues', minValue: 0 })
+    .setOption('legend', { position: 'none' })
     .setOption('series', {
-      0: { color: '#4285F4', lineWidth: 2 }, // Created - blue
-      1: { color: '#34A853', lineWidth: 2 }, // Completed - green
-      2: { color: '#EA4335', lineWidth: 3 }  // Remaining - red, thicker
+      0: { color: '#EA4335', lineWidth: 3 } // Remaining - red
     })
     .build();
 
