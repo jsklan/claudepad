@@ -1,0 +1,21 @@
+# Optional: Uncomment to keep conversations private
+# conversations/raw/
+# conversations/summaries/
+
+# Artifacts are meant to be shared/committed
+# artifacts/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
