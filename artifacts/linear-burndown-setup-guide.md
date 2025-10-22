@@ -62,6 +62,8 @@ Each sheet contains its own:
 - Burndown chart visualization
 - Summary statistics panel
 
+**Smart Refresh**: The script preserves any custom formatting you've applied to existing sheets. Only data values are updated, not formatting, column widths, or styles.
+
 ### Switching Between Customers
 
 Simply click on the sheet tabs at the bottom to view different customer burndowns.

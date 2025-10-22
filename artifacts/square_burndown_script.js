@@ -1,7 +1,8 @@
 /**
  * Linear Burndown Chart Script
  * Auto-refreshes issue data from Linear projects
- * Supports multiple customer projects with dropdown selector
+ * Creates separate sheets for each customer project
+ * Preserves custom formatting on existing sheets
  */
 
 // Project configuration
@@ -226,7 +227,9 @@ function refreshCustomerSheet(projectName) {
 
   // Get or create sheet for this customer
   let sheet = ss.getSheetByName(projectName);
-  if (!sheet) {
+  const isNewSheet = !sheet;
+
+  if (isNewSheet) {
     sheet = ss.insertSheet(projectName);
   }
 
@@ -239,21 +242,42 @@ function refreshCustomerSheet(projectName) {
     // Prepare burndown data
     const burndownData = prepareBurndownData(ghIssues);
 
-    // Clear existing data
-    sheet.clear();
+    // Only format if this is a new sheet
+    if (isNewSheet) {
+      // Add title
+      sheet.getRange('A1').setValue(`${projectName} - GitHub Issue Burndown`)
+        .setFontSize(14)
+        .setFontWeight('bold');
 
-    // Add title
-    sheet.getRange('A1').setValue(`${projectName} - GitHub Issue Burndown`)
-      .setFontSize(14)
-      .setFontWeight('bold');
+      // Write headers
+      sheet.getRange('A3:D3').setValues([[
+        'Date',
+        'Created',
+        'Completed',
+        'Remaining'
+      ]]).setFontWeight('bold');
 
-    // Write headers
-    sheet.getRange('A3:D3').setValues([[
-      'Date',
-      'Total Created',
-      'Total Completed',
-      'Remaining'
-    ]]).setFontWeight('bold');
+      // Setup summary section
+      sheet.getRange('F3').setValue('Summary:').setFontWeight('bold');
+      sheet.getRange('F4:F7').setValues([
+        ['Total Issues:'],
+        ['Completed:'],
+        ['Remaining:'],
+        ['Last Updated:']
+      ]).setFontWeight('bold');
+
+      // Format summary timestamp
+      sheet.getRange('G7').setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    }
+
+    // Clear only data rows (preserve formatting)
+    if (!isNewSheet) {
+      // Clear existing data rows but keep headers
+      const lastRow = sheet.getMaxRows();
+      if (lastRow > 3) {
+        sheet.getRange(4, 1, lastRow - 3, 4).clearContent();
+      }
+    }
 
     // Write data
     if (burndownData.length > 0) {
@@ -266,31 +290,30 @@ function refreshCustomerSheet(projectName) {
 
       sheet.getRange(4, 1, dataRows.length, 4).setValues(dataRows);
 
-      // Format date column
-      sheet.getRange(4, 1, dataRows.length, 1).setNumberFormat('yyyy-mm-dd');
+      // Format date column only if new sheet
+      if (isNewSheet) {
+        sheet.getRange(4, 1, dataRows.length, 1).setNumberFormat('yyyy-mm-dd');
+      }
     }
 
     // Create or update chart
     createBurndownChart(sheet, projectName, burndownData.length);
 
-    // Add summary stats
+    // Update summary stats (values only, not formatting)
     if (burndownData.length > 0) {
       const lastRow = burndownData[burndownData.length - 1];
-      sheet.getRange('F3').setValue('Summary:').setFontWeight('bold');
-      sheet.getRange('F4:G7').setValues([
-        ['Total Issues:', lastRow.created],
-        ['Completed:', lastRow.completed],
-        ['Remaining:', lastRow.remaining],
-        ['Last Updated:', new Date()]
+      sheet.getRange('G4:G7').setValues([
+        [lastRow.created],
+        [lastRow.completed],
+        [lastRow.remaining],
+        [new Date()]
       ]);
-
-      // Format summary
-      sheet.getRange('F4:F7').setFontWeight('bold');
-      sheet.getRange('G7').setNumberFormat('yyyy-mm-dd hh:mm:ss');
     }
 
-    // Auto-resize columns
-    sheet.autoResizeColumns(1, 7);
+    // Auto-resize columns only for new sheets
+    if (isNewSheet) {
+      sheet.autoResizeColumns(1, 7);
+    }
 
   } catch (error) {
     throw new Error(`Failed to refresh ${projectName}: ${error.message}`);
@@ -312,8 +335,8 @@ function createBurndownChart(sheet, projectName, dataRows) {
   const chart = sheet.newChart()
     .setChartType(Charts.ChartType.LINE)
     .addRange(sheet.getRange(3, 1, dataRows + 1, 1)) // Date column
-    .addRange(sheet.getRange(3, 2, dataRows + 1, 1)) // Total Created
-    .addRange(sheet.getRange(3, 3, dataRows + 1, 1)) // Total Completed
+    .addRange(sheet.getRange(3, 2, dataRows + 1, 1)) // Created
+    .addRange(sheet.getRange(3, 3, dataRows + 1, 1)) // Completed
     .addRange(sheet.getRange(3, 4, dataRows + 1, 1)) // Remaining
     .setPosition(9, 1, 0, 0)
     .setOption('title', `${projectName} - GitHub Issue Burndown`)
@@ -323,8 +346,8 @@ function createBurndownChart(sheet, projectName, dataRows) {
     .setOption('vAxis', { title: 'Issue Count', minValue: 0 })
     .setOption('legend', { position: 'bottom' })
     .setOption('series', {
-      0: { color: '#4285F4', lineWidth: 2 }, // Total Created - blue
-      1: { color: '#34A853', lineWidth: 2 }, // Total Completed - green
+      0: { color: '#4285F4', lineWidth: 2 }, // Created - blue
+      1: { color: '#34A853', lineWidth: 2 }, // Completed - green
       2: { color: '#EA4335', lineWidth: 3 }  // Remaining - red, thicker
     })
     .build();
