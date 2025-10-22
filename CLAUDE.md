@@ -30,9 +30,20 @@ claudepad/
 - Document decisions as they emerge
 - Be collaborative and exploratory
 
+### Session End Signals
+
+The user will indicate session end by saying any of:
+- "wrap up" / "let's wrap this up"
+- "end session" / "finish session"
+- "done for now" / "that's all for today"
+- "create the docs" / "generate the artifacts"
+- Or any clear indication they want to conclude
+
+When you see these signals, immediately begin the End of Session Protocol.
+
 ### End of Session Protocol
 
-When the user indicates the session is ending (or ~30-45 minutes have passed), follow this protocol:
+Follow this protocol when the user signals session end:
 
 #### 1. Create Raw Conversation Transcript
 **File**: `conversations/raw/YYYY-MM-DD_topic-slug.md`
