@@ -77,10 +77,10 @@ frond generator python-sdk 99.99.99
 cd ~/git/workspaces/anduril/config
 
 # If testing with unmodified Fern CLI:
-fern generate --log-level debug --group python-sdk-local --local
+expgh && expft anduril && fern generate --log-level debug --group python-sdk-local --local
 
 # If testing with local Fern CLI changes:
-fernlocal generate --log-level debug --group python-sdk-local --local
+expgh && expft anduril && fernlocal generate --log-level debug --group python-sdk-local --local
 ```
 
 **Note**: When making changes to the Fern CLI locally, use `fernlocal` instead of `fern` to test with your local build.

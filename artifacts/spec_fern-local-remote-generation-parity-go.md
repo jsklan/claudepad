@@ -77,10 +77,10 @@ frond generator go-sdk 99.99.99
 cd ~/git/workspaces/anduril/config
 
 # If testing with unmodified Fern CLI:
-fern generate --log-level debug --group go-sdk-local --local --version 3.0.0
+expgh && expft anduril && fern generate --log-level debug --group go-sdk-local --local --version 3.0.0
 
 # If testing with local Fern CLI changes:
-fernlocal generate --log-level debug --group go-sdk-local --local --version 3.0.0
+expgh && expft anduril && fernlocal generate --log-level debug --group go-sdk-local --local --version 3.0.0
 ```
 
 **Note**: When making changes to the Fern CLI locally, use `fernlocal` instead of `fern` to test with your local build. The `--version 3.0.0` flag is required for Go SDK generation.
